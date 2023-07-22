@@ -1,6 +1,3 @@
-#Twitter: Bek Brace
-#Instagram: Bek Brace
-
 import uvicorn
 from fastapi import FastAPI, Body, Depends
 
@@ -13,17 +10,17 @@ posts = [
     {
         "id": 1,
         "title": "Penguins ",
-        "text": "Penguins are a group of aquatic flightless birds."
+        "text": "Penguins text here."
     },
     {
         "id": 2,
         "title": "Tigers ",
-        "text": "Tigers are the largest living cat species and a memeber of the genus panthera."
+        "text": "Tigers text here."
     },
     {
         "id": 3,
         "title": "Koalas ",
-        "text": "Koala is arboreal herbivorous maruspial native to Australia."
+        "text": "Koala text here."
     },
 ]
 

@@ -24,7 +24,7 @@ def signJWT(user_id: str) -> Dict[str, str]:
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
     return token_response(token)
-
+ 
 
 def decodeJWT(token: str) -> dict:
     try:

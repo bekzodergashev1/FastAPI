@@ -1,38 +1,41 @@
 from pydantic import BaseModel, Field, EmailStr
 
-class PostSchame(BaseModel):
-    id : int = Field(defould=None)
-    title : str = Field(defould=None)
-    content : str = Field(defould=None)
+class PostSchema(BaseModel):
+    id: int = Field(default=None)
+    title: str = Field(...)
+    content: str = Field(...)
+
     class Config:
         schema_extra = {
-            "post_demo" : {
-                "title" : "post texti yoziladi",
-                "content" : "content texti yoziladi"
-            }
-        }
-    
-class UserSchema(BaseModel):
-    fullname : str = Field(defauld=None)  
-    email : EmailStr = Field(default=None)
-    password : str = Field(default=None)
-    class Config:
-        the_schema = {
-            "user_demo" : {
-                "name" : "Bekzod",
-                "email" : "bkzod@gmail.com",
-                "password" : "123"
+            "example": {
+                "title": "Securing FastAPI applications with JWT.",
+                "content": "In this tutorial, you'll learn how to secure your application by enabling authentication using JWT. We'll be using PyJWT to sign, encode and decode JWT tokens...."
             }
         }
 
+
 class UserSchema(BaseModel):
-    email : EmailStr = Field(default=None)
-    password : str = Field(default=None)
+    fullname: str = Field(...)
+    email: EmailStr = Field(...)
+    password: str = Field(...)
+
     class Config:
-        the_schema = {
-            "user_demo" : {
-                "email" : "bkzod@gmail.com",
-                "password" : "123"
+        schema_extra = {
+            "example": {
+                "fullname": "Joe Doe",
+                "email": "joe@xyz.com",
+                "password": "any"
             }
         }
 
+class UserLoginSchema(BaseModel):
+    email: EmailStr = Field(...)
+    password: str = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "joe@xyz.com",
+                "password": "any"
+            }
+        }

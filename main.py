@@ -1,83 +1,92 @@
-import fastapi
+#Twitter: Bek Brace
+#Instagram: Bek Brace
+
 import uvicorn
-from fastapi import FastAPI, Body
-from app.model import PostSchame, UserSchema, UserLoginSchema
-from app.auth.jwt_handler import signJWT
+from fastapi import FastAPI, Body, Depends
+
+from app.model import PostSchema, UserSchema, UserLoginSchema
+from app.auth.auth_bearer import JWTBearer
+from app.auth.auth_handler import signJWT
 
 
-    
 posts = [
     {
-        "id" : 1,
-        "title" : "Dog1 🐶",
-        "text" : "Text here"
+        "id": 1,
+        "title": "Penguins ",
+        "text": "Penguins are a group of aquatic flightless birds."
     },
     {
-        "id" : 2,
-        "title" : "Dog2 🐶",
-        "text" : "Text here"
+        "id": 2,
+        "title": "Tigers ",
+        "text": "Tigers are the largest living cat species and a memeber of the genus panthera."
     },
     {
-        "id" : 3,
-        "title" : "Dog3 🐶",
-        "text" : "Text here"
-    }
+        "id": 3,
+        "title": "Koalas ",
+        "text": "Koala is arboreal herbivorous maruspial native to Australia."
+    },
 ]
 
 users = []
 
 app = FastAPI()
 
-# Get - for testing
+
+
+def check_user(data: UserLoginSchema):
+    for user in users:
+        if user.email == data.email and user.password == data.password:
+            return True
+    return False
+
+
+# route handlers
+
+# testing
 @app.get("/", tags=["test"])
 def greet():
-    return {"Hello":"World"}
+    return {"hello": "world!."}
 
-# Get Post
-@app.get("/post", tags=["posts"])
+
+# Get Posts
+@app.get("/posts", tags=["posts"])
 def get_posts():
-    return {"data" : posts}
+    return { "data": posts }
 
-# Get single post{id}
-@app.get("/post/{id}", tags=["posts"])
-def get_one_post(id : int):
+
+@app.get("/posts/{id}", tags=["posts"])
+def get_single_post(id: int):
     if id > len(posts):
         return {
-            "eror":"Post with thir ID does not exist"
+            "error": "No such post with the supplied ID."
         }
+
     for post in posts:
         if post["id"] == id:
             return {
-                "data" : post
+                "data": post
             }
 
-# Post a blog post
-@app.post("/posts", tags=["posts"])
-def add_post(post : PostSchame):
+
+@app.post("/posts", dependencies=[Depends(JWTBearer())], tags=["posts"])
+def add_post(post: PostSchema):
     post.id = len(posts) + 1
     posts.append(post.dict())
     return {
-        "info":"Post Added!"
+        "data": "post added."
     }
 
-# User Signup [create a new user]
-@app.post("user/signin", tags=["user"])
-def user_signup(user : UserSchema = Body(defould=None)):
-    users.append(user)
+
+@app.post("/user/signup", tags=["user"])
+def create_user(user: UserSchema = Body(...)):
+    users.append(user) # replace with db call, making sure to hash the password first
     return signJWT(user.email)
 
-def Check_user(data : UserLoginSchema):
-    for user in users:
-        if user.email == data.email and user.password == data.passwod:
-            return True
-        return False
-    
+
 @app.post("/user/login", tags=["user"])
-def user_login(user: UserLoginSchema = Body(default=None)):
-    if Check_user(user):
+def user_login(user: UserLoginSchema = Body(...)):
+    if check_user(user):
         return signJWT(user.email)
-    else:
-        return{
-            "eror":"Invalit login datails"
-        }
-    
+    return {
+        "error": "Wrong login details!"
+    }

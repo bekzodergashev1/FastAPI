@@ -10,7 +10,6 @@ class Product(Base):
     __tablename__ = "products"
     id: Mapped[intpk]
     title = Column(String, nullable=False)
-
     name = Column(String, nullable=False)
     imge = Column(String, nullable=True)
     cost = Column(Float, default=0)

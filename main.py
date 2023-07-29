@@ -11,7 +11,7 @@ from sql_app.models import Product
 def get_product():
     with SessionLocal() as session:
         data = session.execute(
-            select(Product).where(Product.id == 2)
+            select(Product).where(Product.id == 3)
         ).scalar()
     return data
 
@@ -25,7 +25,31 @@ def create_product(name, title, image, cost):
                 cost=cost
             )
         )
-        session.commit()    
+        session.commit()
+
+def update_product(id, name, title, image, cost):
+    with SessionLocal() as session:
+        data = session.execute(
+            insert(Product).values(
+                id=id,
+                name=name,
+                title=title,
+                imge=image,
+                cost=cost
+            )
+        )
+        session.commit()
+
+
+def delete_product(id):
+    with SessionLocal() as session:
+        data = session.exicute(
+            insert(Product).values(
+            id=id
+            )
+        )
+        session.commit()
+
 
 
 
@@ -51,10 +75,30 @@ def greet():
     #     })
     return data
 
+
+@app.get("/{id}")
+def getitem(id:int):
+    pass
+
+
 @app.post("/create")
-def create(name: str, title: str, image: str, cost: int):
+def add(name: str, title: str, image: str, cost: int):
     data = create_product(name, title, image, cost)
     return {"message": "created"}
+
+
+@app.put("/{id}")
+def update(id: int, name: str, title: str, image: str, coast: int):
+    data = update_product(id, name, title, image, coast)
+    return {"message": "updated"}
+
+
+@app.delete("/{id}")
+def delete(id: int):
+    data = delete_product(id)
+    return {"message": "deleted"}
+
+
 
 # @app.post("/user/signup", tags=["user"])
 # def create_user(user: UserSchema = Body(...)):

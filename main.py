@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI, Body, Depends
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, delete, update
 from sql_app.database import SessionLocal
 
 # from sql_app.schema import PostSchema, UserSchema, UserLoginSchema
@@ -11,8 +11,8 @@ from sql_app.models import Product
 def get_product():
     with SessionLocal() as session:
         data = session.execute(
-            select(Product).where(Product.id == 3)
-        ).scalar()
+            select(Product)
+        ).scalars().all()
     return data
 
 def create_product(name, title, image, cost):
@@ -27,15 +27,13 @@ def create_product(name, title, image, cost):
         )
         session.commit()
 
-def update_product(id, name, title, image, cost):
+def update_product(id, quantity):
     with SessionLocal() as session:
-        data = session.execute(
-            insert(Product).values(
-                id=id,
-                name=name,
-                title=title,
-                imge=image,
-                cost=cost
+        session.execute(
+            update(Product).where(
+                Product.id == id
+            ).values(
+                quantity=quantity,
             )
         )
         session.commit()
@@ -43,14 +41,18 @@ def update_product(id, name, title, image, cost):
 
 def delete_product(id):
     with SessionLocal() as session:
-        data = session.exicute(
-            insert(Product).values(
-            id=id
-            )
+        session.execute(
+            delete(Product).where(Product.id == id)
         )
         session.commit()
 
 
+def get_item_with_id(id):
+    with SessionLocal() as session:
+        data = session.execute(
+            select(Product).where(Product.id == id)
+        ).scalar()
+    return data
 
 
 users = []
@@ -78,7 +80,8 @@ def greet():
 
 @app.get("/{id}")
 def getitem(id:int):
-    pass
+    data = get_item_with_id(id)
+    return data
 
 
 @app.post("/create")
@@ -93,7 +96,7 @@ def update(id: int, name: str, title: str, image: str, coast: int):
     return {"message": "updated"}
 
 
-@app.delete("/{id}")
+@app.delete("/delete/{id}")
 def delete(id: int):
     data = delete_product(id)
     return {"message": "deleted"}

@@ -29,26 +29,33 @@ def create_product(name, title, image, cost, quantity, ordering, is_active, comm
                 comment=comment
             )
         )
-        session.data()
+        session.commit()
 
 def update_product(id, quantity):
-    with SessionLocal() as session:
-        session.execute(
-            update(Product).where(
-                Product.id == id
-            ).values(
-                quantity=quantity,
-            )
-        )
-        session.commit()
+    try:
+        with SessionLocal() as session:
+            session.execute(
+            update(Product).where(Product.id == id).values(quantity=quantity))
+            session.commit()
+            return True
+
+    except Exception as exc:
+        return str(exc)
 
 
 def delete_product(id):
-    with SessionLocal() as session:
-        session.execute(
-            delete(Product).where(Product.id == id)
-        )
-        session.commit()
+    try:
+        with SessionLocal() as session:
+            product = session.query(Product).filter(Product.id == id).first()
+            if product:
+                session.delete(product)
+                session.commit()
+                return True
+            else:
+                return False
+    except Exception as exc:
+        return str(exc)
+
 
 
 def get_item_with_id(id):
@@ -62,7 +69,6 @@ def get_item_with_id(id):
 users = []
 
 app = FastAPI()
-
 
 
 
@@ -94,16 +100,16 @@ def add(name: str, title: str, image: str, cost: int, quantity: int, ordering: i
     return {"message": "created"}
 
 
-@app.put("/{id}")
-def update(id: int, name: str, title: str, image: str, cost: int, quantity: int, ordering: int, is_active: bool, comment: str):
-    data = update_product(id, name, title, image, cost, quantity, ordering, is_active, comment)
-    return {"message": "updated"}
+@app.patch("/{id}")
+def update(id: int, quantity: int):
+    data = update_product(id, quantity)
+    return {"message": data}
 
 
 @app.delete("/delete/{id}")
 def delete(id: int):
     data = delete_product(id)
-    return {"message": "deleted"}
+    return {"message": data}
 
 
 

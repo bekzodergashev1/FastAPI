@@ -17,6 +17,3 @@ class Product(Base):
     ordering = Column(Integer, nullable=True)
     is_active = Column(Boolean, default=False, nullable=False)
     comment = Column(String, nullable=True)
-
-    def __str__(self):
-        return self.name

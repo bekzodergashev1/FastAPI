@@ -1,4 +1,4 @@
-# from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr
 
 # class ProductSchema(BaseModel):
 #     name: int = Field(default=None)
@@ -44,3 +44,7 @@
 #                 "password": "any"
 #             }
 #         }
+
+
+class ProductQuantitySchema(BaseModel):
+    quantity: int

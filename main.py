@@ -15,17 +15,21 @@ def get_product():
         ).scalars().all()
     return data
 
-def create_product(name, title, image, cost):
+def create_product(name, title, image, cost, quantity, ordering, is_active, comment):
     with SessionLocal() as session:
         data = session.execute(
             insert(Product).values(
                 name=name,
                 title=title,
                 imge=image,
-                cost=cost
+                cost=cost,
+                quantity=quantity,
+                ordering=ordering,
+                is_active=is_active,
+                comment=comment
             )
         )
-        session.commit()
+        session.data()
 
 def update_product(id, quantity):
     with SessionLocal() as session:
@@ -85,14 +89,14 @@ def getitem(id:int):
 
 
 @app.post("/create")
-def add(name: str, title: str, image: str, cost: int):
-    data = create_product(name, title, image, cost)
+def add(name: str, title: str, image: str, cost: int, quantity: int, ordering: int, is_active: bool, comment: str):
+    data = create_product(name, title, image, cost, quantity, ordering, is_active, comment)
     return {"message": "created"}
 
 
 @app.put("/{id}")
-def update(id: int, name: str, title: str, image: str, coast: int):
-    data = update_product(id, name, title, image, coast)
+def update(id: int, name: str, title: str, image: str, cost: int, quantity: int, ordering: int, is_active: bool, comment: str):
+    data = update_product(id, name, title, image, cost, quantity, ordering, is_active, comment)
     return {"message": "updated"}
 
 
